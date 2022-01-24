@@ -62,14 +62,17 @@
 -- The Dark Knight Rises  Joseph Gordon-Levitt  John Blake
 -- The Dark Knight Rises  Anne Hathaway         Selina Kyle
 
+
+
 -- Turns column mode on but headers off
-.mode column
-.headers off
+--.mode column
+--.headers off
 
 -- Drop existing tables, so you'll start fresh each time this script is run.
 -- TODO!
 
 DROP TABLE IF EXISTS movies;
+DROP TABLE IF EXISTS actors;
 DROP TABLE IF EXISTS top_casts;
 
 
@@ -78,49 +81,69 @@ DROP TABLE IF EXISTS top_casts;
 
 CREATE TABLE movies (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  movie_name CHARACTER(20),
+  movie_name TEXT,
   movie_year INTEGER,
   rating TEXT,
   director TEXT
 );
 
+CREATE TABLE actors (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  actor_name TEXT
+);
+
+
 CREATE TABLE top_casts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   movie_id INTEGER,
-  actor TEXT,
-role TEXT
+  actors_id INTEGER,
+  role TEXT
 );
 
 -- Insert data into your database that reflects the sample data shown above
 -- Use hard-coded foreign key IDs when necessary
 -- TODO!
--- Batman Begins          2005           PG-13  Christopher Nolan
--- The Dark Knight        2008           PG-13  Christopher Nolan
--- The Dark Knight Rises  2012           PG-13  Christopher Nolan
+
 INSERT INTO movies (movie_name, movie_year, rating, director)
 VALUES 
     ("Batman Begins", 2006, "PG-13", "Christopher Nolan"),
-    ("The Dark Knight", 2008, "PG-13", " Christopher Nolan"),   
+    ("The Dark Knight", 2008, "PG-13", "Christopher Nolan"),   
     ("The Dark Knight Rises", 2012, "PG-13", "Christopher Nolan");
 
-INSERT INTO top_casts (movie_id, actor, role)
-VALUES 
-    (1, "Christian Bale", "Bruce Wayne"),
-    (1, "Michael Caine", "Alfred"),
-    (1, "Liam Neeson", "Ra's Al Ghul"),
-    (1, "Katie Holmes", "Rachel Dawes"),
-    (1, "Gary Oldman", "Commissioner Gordon"),
-    (2, "Christian Bale", "Bruce Wayne"),
-    (2, "Heath Ledger", "Joker"),
-    (2, "Aaron Eckhart", "Harvey Dent"),
-    (2, "Michael Caine", "Alfred"),
-    (2, "Maggie Gyllenhaal", "Rachel Dawes"),
 
-    (3, "Christian Bale", "Bruce Wayne"),
-    (3, "Gary Oldman", "Commissioner Gordon"),
-    (3, "Tom Hardy", "Bane"),
-    (3, "Joseph Gordon-Levitt", "John Blake"),
-    (3, "Anne Hathaway", "Selina Kyle");
+INSERT INTO actors (actor_name)
+VALUES 
+    ("Christian Bale"),
+    ("Michael Caine"),
+    ("Liam Neeson"),
+    ("Katie Holmes"),
+    ("Gary Oldman"),
+    ("Heath Ledger"),
+    ("Aaron Eckhart"),
+    ("Maggie Gyllenhaal"),
+    ("Tom Hardy"),
+    ("Joseph Gordon-Levitt"),
+    ("Anne Hathaway");
+
+
+
+INSERT INTO top_casts (movie_id, actors_id, role)
+VALUES 
+    (1, 1, "Bruce Wayne"),
+    (1, 2, "Alfred"),
+    (1, 3, "Ra's Al Ghul"),
+    (1, 4, "Rachel Dawes"),
+    (1, 5, "Commissioner Gordon"),
+    (2, 1, "Bruce Wayne"),
+    (2, 6, "Joker"),
+    (2, 7, "Harvey Dent"),
+    (2, 2, "Alfred"),
+    (2, 8, "Rachel Dawes"),
+    (3, 1, "Bruce Wayne"),
+    (3, 5, "Commissioner Gordon"),
+    (3, 9, "Bane"),
+    (3, 10, "John Blake"),
+    (3, 11, "Selina Kyle");
 
 
 -- Prints a header for the movies output
@@ -128,10 +151,11 @@ VALUES
 .print "======"
 .print ""
 
-Select * from movies;
 
 -- The SQL statement for the movies output
 -- TODO!
+Select movie_name, movie_year, rating, director from movies;
+
 
 -- Prints a header for the cast output
 .print ""
@@ -142,3 +166,8 @@ Select * from movies;
 
 -- The SQL statement for the cast output
 -- TODO!
+
+select movies.movie_name, actors.actor_name, top_casts.role 
+from top_casts
+join actors on actors.id = top_casts.actors_id
+join movies on movies.id = top_casts.movie_id;
